@@ -1,9 +1,10 @@
-const express = require("express");
-const pool = require("../db/db");
-const logger = require("../logger/logger");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { jwtTokens } = require("../utils/jwt-helpers");
+const express = require('express');
+const pool = require('../db/db');
+const logger = require('../logger/logger');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { jwtTokens } = require('../utils/jwt-helpers');
+const { validateLogin } = require('../utils/validations');
 
 const router = express.Router();
 
@@ -20,15 +21,17 @@ const router = express.Router();
 
 */
 //handle Login
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { user_email, user_password } = req.body;
-    const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [
+    const validateData = await validateLogin.validateAsync(req.body);
+
+    const user = await pool.query('SELECT * FROM users WHERE user_email = $1', [
       user_email,
     ]);
     if (user.rows.length === 0) {
       return res.status(401).json({
-        message: "Email not found",
+        message: 'Email not found',
       });
     }
 
@@ -39,7 +42,7 @@ router.post("/login", async (req, res) => {
     );
     if (!isMatch) {
       return res.status(401).json({
-        message: "Invalid credentials",
+        message: 'Invalid credentials',
       });
     }
 
@@ -50,10 +53,10 @@ router.post("/login", async (req, res) => {
     //   user_email: user.rows[0].user_email,
     // });
     let tokens = jwtTokens(user.rows[0]);
-    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true });
 
     return res.status(200).json({
-      message: "Login successful",
+      message: 'Login successful',
       token: tokens,
     });
   } catch (error) {
@@ -62,21 +65,21 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/refresh_token", (req, res) => {
+router.get('/refresh_token', (req, res) => {
   try {
     const refreshToken = req.cookies.refresh_token;
     console.log(
-      "🚀 ~ file: auth.routes.js ~ line 68 ~ router.get ~ refreshToken",
+      '🚀 ~ file: auth.routes.js ~ line 68 ~ router.get ~ refreshToken',
       refreshToken
     );
     if (refreshToken === null)
-      return res.status(401).json({ error: "Null refresh token" });
+      return res.status(401).json({ error: 'Null refresh token' });
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) return res.status(401).json({ error: "Invalid refresh token" });
+      if (err) return res.status(401).json({ error: 'Invalid refresh token' });
       let tokens = jwtTokens(user);
-      res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true }); //if the backend is separated from the frontend, use res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true,sameSite:'none' secure: true });
+      res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true }); //if the backend is separated from the frontend, use res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true,sameSite:'none' secure: true });
       return res.status(200).json({
-        message: "Refresh token successful",
+        message: 'Refresh token successful',
         token: tokens,
       });
     });
@@ -86,11 +89,11 @@ router.get("/refresh_token", (req, res) => {
   }
 });
 
-router.delete("/refresh_token", (req, res) => {
+router.delete('/refresh_token', (req, res) => {
   try {
-    res.clearCookie("refresh_token");
+    res.clearCookie('refresh_token');
     return res.status(200).json({
-      message: "Refresh token deleted",
+      message: 'Refresh token deleted',
     });
   } catch (error) {
     logger.error(error);

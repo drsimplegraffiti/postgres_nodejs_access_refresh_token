@@ -41,6 +41,10 @@ router.post('/', async (req, res) => {
 router.get('/:news_id', async (req, res) => {
   try {
     const { news_id } = req.params;
+    const checkIfIdExists = await pool.query('SELECT * FROM news');
+    if (news_id != checkIfIdExists.rows) {
+      return res.status(404).json({ error: `${news_id} not found` });
+    }
     const singleNews = await pool.query('SELECT * FROM news WHERE news_id=$1', [
       news_id,
     ]);
