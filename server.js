@@ -1,3 +1,4 @@
+const createDefaultTables = require("./scripts/create-table");
 const app = require("./index");
 const logger = require("./logger/logger");
 const fs = require("fs");
@@ -14,8 +15,9 @@ const sslServer = https.createServer(
   app
 );
 
-sslServer.listen(port, () => {
+sslServer.listen(port, async () => {
   try {
+    await createDefaultTables();
     logger.info(`Server is running on port ${port}`);
   } catch (error) {
     logger.error(error);

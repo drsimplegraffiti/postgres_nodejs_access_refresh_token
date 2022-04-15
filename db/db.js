@@ -5,7 +5,7 @@ const localPoolConfig = {
   user: "postgres",
   host: "localhost",
   database: "jwtnode",
-  password: process.env.DB_PASSWORD,
+  password: "Bassguitar1",
   port: 5432,
   max: 10, //*
   idleTimeoutMillis: 30000, //*

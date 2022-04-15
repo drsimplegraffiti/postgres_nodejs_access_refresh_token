@@ -95,6 +95,7 @@ make a folder `cert` and cd into `cert`
 ```javascript
 openssl genrsa -out key.pem
 ```
+
 ![private key](https://user-images.githubusercontent.com/70065792/163576762-144c09dd-84f2-46ea-b7b4-527417f94b8e.PNG)
 
 2. Create a certificate signing request
@@ -102,6 +103,7 @@ openssl genrsa -out key.pem
 ```javascript
 openssl req -new -key key.pem -out csr.pem
 ```
+
 ![cert signing request](https://user-images.githubusercontent.com/70065792/163576782-aecc11a5-8a6b-455e-aa3d-703e5ef384b8.PNG)
 
 3. Generate ssl certificate
@@ -109,10 +111,9 @@ openssl req -new -key key.pem -out csr.pem
 ```javascript
 openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
 ```
+
 ![ssl generated](https://user-images.githubusercontent.com/70065792/163576882-f712eeed-ed86-4e79-974c-9ac5fa164af5.PNG)
 
-
 #### SSL keys generated
+
 ![three cert keys](https://user-images.githubusercontent.com/70065792/163576811-2cffb18a-8f4d-4da2-a5a1-7942dfc481c4.PNG)
-
-
