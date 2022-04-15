@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS news(
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-/* INSERT INTO
- news (headline, body)
- VALUES
- (
- 'bombings in Nigeria',
- '100 rescued as fight begins in Northern Nigeria'
- ); */
+INSERT INTO
+    news (headline, body)
+VALUES
+    (
+        'bombings in Nigeria',
+        '100 rescued as fight begins in Northern Nigeria'
+    );

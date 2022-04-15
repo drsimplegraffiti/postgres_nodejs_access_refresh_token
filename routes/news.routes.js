@@ -2,6 +2,8 @@ const express = require('express');
 const pool = require('../db/db');
 const logger = require('../logger/logger');
 const { authenticateToken } = require('../middleware/authorization');
+const { validateNews } = require('../utils/validations');
+
 const router = express.Router();
 
 let refreshTokens = [];
@@ -12,10 +14,22 @@ let refreshTokens = [];
  * @returns {JSON}
  * @returns {String} message
  */
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const news = await pool.query('SELECT * FROM news');
-    res.json({ news: news.rows });
+    const { page } = req.query;
+    const news = await pool.query(
+      `SELECT * FROM news Order By news_id LIMIT 5 OFFSET (${(page - 1) * 5})`
+    );
+    if (news.rows[0] == null || !news.rows[0] || news.rows[0] == []) {
+      return res.status(404).json({
+        message: `Page Not Found.....`,
+      });
+    }
+    dataCount = news.rows.length;
+    res.json({
+      news: news.rows,
+      pageInfo: `Page ${page} of ${Math.ceil(dataCount / 5)}`,
+    });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: error.message });
@@ -25,6 +39,8 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { headline, body } = req.body;
+    const validateData = await validateNews.validateAsync(req.body);
+
     const news = await pool.query(
       'INSERT INTO news (headline, body) VALUES ($1, $2) RETURNING *',
       [headline, body]

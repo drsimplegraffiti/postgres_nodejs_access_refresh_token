@@ -1,5 +1,7 @@
 const pg = require('pg');
 const dotenv = require('dotenv');
+const logger = require('../logger/logger');
+
 dotenv.config();
 const { Pool } = pg;
 
@@ -24,5 +26,13 @@ const poolConfig = process.env.DATABASE_URL
   : localPoolConfig;
 
 const pool = new Pool(poolConfig);
+pool.query('SELECT NOW()', (err, res) => {
+  if (!err) {
+    logger.info('connected to db 😁😁😁😁😁😁😁😁😁');
+  } else {
+    logger.error(err.message);
+  }
+  //   console.log("connected PGSQL");
+});
 
 module.exports = pool;

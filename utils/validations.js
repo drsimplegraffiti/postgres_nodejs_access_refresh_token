@@ -15,4 +15,9 @@ const validateLogin = joi.object({
   user_password: joi.string().min(8).pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
 
-module.exports = { validateLogin, validateReg };
+const validateNews = joi.object({
+  headline: joi.string().required(),
+  body: joi.string().required(),
+});
+
+module.exports = { validateLogin, validateReg, validateNews };
