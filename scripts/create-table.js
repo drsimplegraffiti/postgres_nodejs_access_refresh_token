@@ -8,10 +8,8 @@ const sqlFilePath = path.join(__dirname, ".", "../database.sql");
 
 const createDefaultTables = async () => {
   try {
-    /** read create table queries from disk*/
     const sqlCommandsBuffer = await fs.readFile(sqlFilePath);
     const sqlCommands = sqlCommandsBuffer.toString();
-    /** exacute  create table queries */
     await pool.query(sqlCommands);
     console.log(`✅ Default tables are  created.`);
   } catch (error) {

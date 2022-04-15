@@ -81,4 +81,5 @@ router.delete("/:news_id", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
 module.exports = router;
