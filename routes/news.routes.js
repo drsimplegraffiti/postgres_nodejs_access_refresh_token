@@ -72,7 +72,10 @@ router.delete("/:news_id", async (req, res) => {
     const deletedNews = await pool.query(`DELETE FROM news WHERE news_id =$1`, [
       news_id,
     ]);
-    return res.status(200).json({ message: "Deleted successfully" });
+
+    return res
+      .status(200)
+      .json({ message: "Deleted successfully", data: deletedNews.rowCount });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: error.message });
