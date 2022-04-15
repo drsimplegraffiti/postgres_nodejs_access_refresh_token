@@ -6,15 +6,11 @@ Install package dependencies
 
 ![Capture](https://user-images.githubusercontent.com/70065792/163389925-8b99fc0d-1b9f-4bd8-9bda-24c4ea36c591.PNG)
 
-
-
-
 ##### Folder Structure
 
 ![foler](https://user-images.githubusercontent.com/70065792/163390450-9ed85636-4ef4-4c6f-b023-8caa7d8f1ff7.PNG)
 
 ---
-
 
 ```javascript
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";  //Run this command before Creating your table
@@ -56,6 +52,7 @@ VALUES
 -- heroku pg:sql    ---> connect to heroku
 
 ```
+
 ![connect ato psql db](https://user-images.githubusercontent.com/70065792/163390008-6822a10f-6468-4706-8ef8-d101ac7d94b6.PNG)
 
 ![create table](https://user-images.githubusercontent.com/70065792/163390040-246c3f73-1cce-4c85-8e0f-a1710f48f5f2.PNG)
@@ -63,7 +60,6 @@ VALUES
 ![insert to table](https://user-images.githubusercontent.com/70065792/163390098-78ce706c-b0fb-4e4e-ac63-f0fe69b3ee7a.PNG)
 
 ![post request result](https://user-images.githubusercontent.com/70065792/163390130-9ef0ffca-b2b3-4565-ac83-549117d265d0.PNG)
-
 
 ---
 
@@ -86,3 +82,28 @@ res.json({
 ##### POstman Document
 
 [Documentation](https://documenter.getpostman.com/view/15544476/Uyr4KLBi)
+
+##### Generate csr && ssl certificates
+
+Git bash comes with openssl, to confirm run `openssl` in your git terminal
+make a folder `cert` and cd into `cert`
+
+### Generate a private key
+
+1.
+
+```javascript
+openssl genrsa -out key.pem
+```
+
+2. Create a certificate signing request
+
+```javascript
+openssl req -new -key key.pem -out csr.pem
+```
+
+3. Generate ssl certificate
+
+```javascript
+openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+```
