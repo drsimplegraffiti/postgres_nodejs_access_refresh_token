@@ -85,7 +85,7 @@ res.json({
 
 ##### Generate csr && ssl certificates
 
-Git bash comes with openssl, to confirm run `openssl` in your git terminal
+Git bash comes with openssl, to confirm run `openssl` in your git terminal or use `choco install openssl`
 make a folder `cert` and cd into `cert`
 
 ### Generate a private key
