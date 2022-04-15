@@ -1,3 +1,5 @@
+const colors = require('colors');
+
 const createDefaultTables = require('./scripts/create-table');
 const app = require('./index');
 const logger = require('./logger/logger');
@@ -21,7 +23,7 @@ process.env.TZ = 'Africa/Lagos';
 sslServer.listen(port, async () => {
   try {
     await createDefaultTables();
-    logger.info(`Server is running on port ${port}`);
+    logger.info(`Server is running on port ${port}`.yellow);
   } catch (error) {
     logger.error(error);
   }
