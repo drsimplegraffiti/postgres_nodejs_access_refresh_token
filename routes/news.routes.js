@@ -1,7 +1,7 @@
-const express = require("express");
-const pool = require("../db/db");
-const logger = require("../logger/logger");
-const { authenticateToken } = require("../middleware/authorization");
+const express = require('express');
+const pool = require('../db/db');
+const logger = require('../logger/logger');
+const { authenticateToken } = require('../middleware/authorization');
 const router = express.Router();
 
 let refreshTokens = [];
@@ -12,9 +12,9 @@ let refreshTokens = [];
  * @returns {JSON}
  * @returns {String} message
  */
-router.get("/", authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const news = await pool.query("SELECT * FROM news");
+    const news = await pool.query('SELECT * FROM news');
     res.json({ news: news.rows });
   } catch (error) {
     logger.error(error);
@@ -22,15 +22,15 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { headline, body } = req.body;
     const news = await pool.query(
-      "INSERT INTO news (headline, body) VALUES ($1, $2) RETURNING *",
+      'INSERT INTO news (headline, body) VALUES ($1, $2) RETURNING *',
       [headline, body]
     );
     res.json({
-      message: "News created successfully",
+      message: 'News created successfully',
       news: news.rows[0],
     });
   } catch (error) {
@@ -38,10 +38,10 @@ router.post("/", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
-router.get("/:news_id", async (req, res) => {
+router.get('/:news_id', async (req, res) => {
   try {
     const { news_id } = req.params;
-    const singleNews = await pool.query("SELECT * FROM news WHERE news_id=$1", [
+    const singleNews = await pool.query('SELECT * FROM news WHERE news_id=$1', [
       news_id,
     ]);
     res.status(200).json({ news: singleNews.rows });
@@ -51,7 +51,7 @@ router.get("/:news_id", async (req, res) => {
   }
 });
 
-router.put("/:news_id", async (req, res) => {
+router.put('/:news_id', async (req, res) => {
   try {
     const { news_id } = req.params;
     const { headline, body } = req.body;
@@ -66,19 +66,38 @@ router.put("/:news_id", async (req, res) => {
   }
 });
 
-router.delete("/:news_id", async (req, res) => {
+router.delete('/:news_id', async (req, res) => {
   try {
     const { news_id } = req.params;
     const deletedNews = await pool.query(`DELETE FROM news WHERE news_id =$1`, [
       news_id,
     ]);
-
+    const isDeleted = deletedNews.rowCount > 0;
+    if (isDeleted) {
+      res.status(204).send();
+    } else {
+      return res.status(404).send({
+        message: 'news not found therefore there is nothing to done.',
+      });
+    }
     return res
       .status(200)
-      .json({ message: "Deleted successfully", data: deletedNews.rowCount });
+      .json({ message: 'Deleted successfully', data: deletedNews.rowCount });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/search', async (req, res) => {
+  try {
+    const newsBody = await pool.query(
+      'SELECT * FROM news WHERE body ILIKE $1;',
+      [`%${req.query.body || ''}%`]
+    );
+    res.send(newsBody.rows);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
   }
 });
 

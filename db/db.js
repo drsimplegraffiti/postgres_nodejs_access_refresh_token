@@ -1,13 +1,15 @@
-const pg = require("pg");
-const dotenv = require("dotenv");
+const pg = require('pg');
+const dotenv = require('dotenv');
 dotenv.config();
 const { Pool } = pg;
 
+const { DATABASE_PASSWORD } = process.env;
+
 const localPoolConfig = {
-  user: "postgres",
-  host: "localhost",
-  database: "jwtnode",
-  password: process.env.DATABASE_PASSWORD,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'jwtnode',
+  password: DATABASE_PASSWORD,
   port: 5432,
   max: 10, //*
   idleTimeoutMillis: 30000, //*
