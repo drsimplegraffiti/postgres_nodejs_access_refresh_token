@@ -34,16 +34,17 @@ router.post('/', async (req, res) => {
   try {
     const { user_name, user_password, user_email } = req.body;
     const validateData = await validateReg.validateAsync(req.body);
-    // const emailExists = await pool.query(
-    //   'SELECT * users WHERE user_email = $1 RETURNING *',
-    //   [user_email]
-    // );
-    // console.log(emailExists);
-    // if (emailExists) {
-    //   return res.status(400).json({
-    //     message: '  This email already exist, pls log in',
-    //   });
-    // }
+    // checking if a user already has an account
+    const user = await pool.query(
+      'SELECT * FROM users WHERE user_email = $1;',
+      [user_email]
+    );
+
+    if (user.rows[0].user_email.length > 0) {
+      return res.status(400).json({
+        message: 'the email already exist',
+      });
+    }
     if (!user_name || !user_password || !user_email) {
       return res.status(400).json({ error: 'Please fill all fields' });
     }
